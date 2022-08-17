@@ -43,6 +43,20 @@ export const FormInput = styled.input<Input>`
   }
 `;
 
+export const RegisterInput = styled.input`
+  height: 3.5em;
+  width: 100%;
+  padding-left: 25px;
+  background: #333;
+  border-radius: 7px;
+  color: #fff;
+  font-size: 1em;
+  border: none;
+  &:focus {
+    outline: none;
+  }
+`;
+
 export const LoginButton = styled.button`
   min-height: 3.2em;
   width: 100%;
