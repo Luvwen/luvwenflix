@@ -1,3 +1,7 @@
+import { FormEvent } from 'react';
+import Swal from 'sweetalert2';
+import { useForm } from '../../hooks/useForm';
+import { checkEmail, checkPassword, checkUsername } from '../../utils/helpers';
 import {
   CardLogin,
   Form,
@@ -8,22 +12,62 @@ import {
   RegisterButton,
   Wrapper,
 } from '../styles/Login.styled';
-
 export interface RegButton {
   margin?: string;
 }
 
 export const Register = () => {
+  const { formValues, handleInputChange } = useForm({
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  const { username, email, password, confirmPassword } = formValues;
+
+  const onSubmit = (evt: FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
+    if (
+      checkUsername(username) &&
+      checkEmail(email) &&
+      checkPassword(password, confirmPassword)
+    )
+      Swal.fire('Good job!', 'All good my friend!', 'success');
+  };
+
   return (
     <Wrapper>
       <CardLogin>
         <LoginTitle>Registrarse</LoginTitle>
-        <Form>
-          <FormInput margin='20px' placeholder='Nombre' />
-          <FormInput margin='20px' type='email' placeholder='Email' />
-          <FormInput margin='20px' type='password' placeholder='Contraseña' />
+        <Form onSubmit={onSubmit}>
           <FormInput
-            margin='20px'
+            name='username'
+            value={username}
+            onChange={handleInputChange}
+            placeholder='Nombre'
+          />
+          <FormInput
+            name='email'
+            value={email}
+            onChange={handleInputChange}
+            margin='30px'
+            type='email'
+            placeholder='Email'
+          />
+          <FormInput
+            name='password'
+            value={password}
+            onChange={handleInputChange}
+            margin='30px'
+            type='password'
+            placeholder='Contraseña'
+          />
+          <FormInput
+            name='confirmPassword'
+            value={confirmPassword}
+            onChange={handleInputChange}
+            margin='30px'
             type='password'
             placeholder='Repetir contraseña'
           />
