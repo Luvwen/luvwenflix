@@ -1,7 +1,11 @@
 import { FormEvent } from 'react';
-import Swal from 'sweetalert2';
+
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../../firebase/firebase';
+
 import { useForm } from '../../hooks/useForm';
 import { checkEmail, checkPassword, checkUsername } from '../../utils/helpers';
+
 import {
   CardLogin,
   Form,
@@ -17,7 +21,7 @@ export interface RegButton {
 }
 
 export const Register = () => {
-  const { formValues, handleInputChange } = useForm({
+  const { formValues, handleInputChange, resetForm } = useForm({
     username: '',
     email: '',
     password: '',
@@ -32,8 +36,18 @@ export const Register = () => {
       checkUsername(username) &&
       checkEmail(email) &&
       checkPassword(password, confirmPassword)
-    )
-      Swal.fire('Good job!', 'All good my friend!', 'success');
+    ) {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          const user = userCredential.user;
+          console.log(user);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
+    resetForm();
   };
 
   return (
