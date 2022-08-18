@@ -3,10 +3,15 @@ import { AuthRoutes } from '../auth/routes/AuthRoutes';
 import { HomeRoutes } from '../components/routes/HomeRoutes';
 
 export const AppRouter = () => {
+  const status: string = 'authenticated';
+
   return (
     <Routes>
-      <Route path='/auth/*' element={<AuthRoutes />} />
-      <Route path='/*' element={<HomeRoutes />} />
+      {status === 'authenticated' ? (
+        <Route path='/*' element={<HomeRoutes />} />
+      ) : (
+        <Route path='/auth/*' element={<AuthRoutes />} />
+      )}
     </Routes>
   );
 };
