@@ -61,7 +61,7 @@ export const RegisterInput = styled.input`
   }
 `;
 
-export const LoginButton = styled.button<LoginButton>`
+export const LoginFormButton = styled.button<LoginButton>`
   min-height: 3.2em;
   width: 100%;
   margin: 25px 0;
@@ -74,7 +74,7 @@ export const LoginButton = styled.button<LoginButton>`
   cursor: pointer;
 `;
 
-export const RegisterButton = styled(LoginButton)<RegButton>`
+export const RegisterButton = styled(LoginFormButton)<RegButton>`
   margin: 0;
   margin-top: ${({ margin }) => (margin ? margin : '')};
   background: #d11114;

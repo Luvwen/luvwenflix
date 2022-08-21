@@ -1,15 +1,18 @@
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { FormEvent, useReducer } from 'react';
+import { FormEvent } from 'react';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { auth } from '../../firebase/firebase';
 import { useForm } from '../../hooks/useForm';
-import { ActionType, authReducer } from '../../reducers/authReducer';
+import { endLogin, startLogin } from '../../redux/reducers/authSlice';
+import { RootState } from '../../redux/store';
 import {
   Wrapper,
   CardLogin,
   LoginTitle,
   Form,
   FormInput,
-  LoginButton,
+  LoginFormButton,
   LinkForm,
 } from '../styles/Login.styled';
 
@@ -25,25 +28,19 @@ export const Login = () => {
 
   const { email, password } = formValues;
 
-  const [{ isLoading }, dispatch] = useReducer(authReducer, {
-    isLoading: false,
-    isLogged: false,
-    uid: '',
-  });
+  const { isLoading } = useSelector((state: RootState) => state.auth);
+
+  const dispatch = useDispatch();
 
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
 
-    dispatch({
-      type: ActionType.AUTH_START_LOGIN,
-    });
-
+    dispatch(startLogin());
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
         const { uid } = user;
-        dispatch({ type: ActionType.AUTH_END_LOGIN, payload: uid });
-        sessionStorage.setItem('token', uid);
+        dispatch(endLogin(uid));
       })
       .catch((err) => console.log(err));
 
@@ -70,7 +67,7 @@ export const Login = () => {
             type='password'
             placeholder='Contraseña'
           />
-          <LoginButton disabled={isLoading}>Iniciar Sesión</LoginButton>
+          <LoginFormButton disabled={isLoading}>Iniciar Sesión</LoginFormButton>
         </Form>
         <LinkForm to='/auth/register'>Registrarse</LinkForm>
       </CardLogin>
