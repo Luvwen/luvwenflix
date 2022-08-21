@@ -1,7 +1,8 @@
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { FormEvent } from 'react';
+import { FormEvent, useReducer } from 'react';
 import { auth } from '../../firebase/firebase';
 import { useForm } from '../../hooks/useForm';
+import { ActionType, authReducer } from '../../reducers/authReducer';
 import {
   Wrapper,
   CardLogin,
@@ -24,18 +25,29 @@ export const Login = () => {
 
   const { email, password } = formValues;
 
+  const [{ isLoading }, dispatch] = useReducer(authReducer, {
+    isLoading: false,
+    isLogged: false,
+    uid: '',
+  });
+
   const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
+
+    dispatch({
+      type: ActionType.AUTH_START_LOGIN,
+    });
 
     signInWithEmailAndPassword(auth, email, password)
       .then((userCredential) => {
         const user = userCredential.user;
         const { uid } = user;
+        dispatch({ type: ActionType.AUTH_END_LOGIN, payload: uid });
         sessionStorage.setItem('token', uid);
       })
       .catch((err) => console.log(err));
 
-    // resetForm();
+    resetForm();
   };
 
   return (
@@ -58,7 +70,7 @@ export const Login = () => {
             type='password'
             placeholder='Contraseña'
           />
-          <LoginButton>Iniciar Sesión</LoginButton>
+          <LoginButton disabled={isLoading}>Iniciar Sesión</LoginButton>
         </Form>
         <LinkForm to='/auth/register'>Registrarse</LinkForm>
       </CardLogin>

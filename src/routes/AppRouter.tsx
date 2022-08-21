@@ -3,11 +3,13 @@ import { AuthRoutes } from '../auth/routes/AuthRoutes';
 import { HomeRoutes } from '../components/routes/HomeRoutes';
 
 export const AppRouter = () => {
-  const status: string = 'authenticated';
+  const token = sessionStorage.getItem('token');
+
+  console.log(token);
 
   return (
     <Routes>
-      {status === 'authenticated' ? (
+      {token !== null && token !== '' ? (
         <Route path='/*' element={<HomeRoutes />} />
       ) : (
         <Route path='/auth/*' element={<AuthRoutes />} />

@@ -4,6 +4,10 @@ import background from '../../images/background.jpg';
 import { Input } from '../pages/Login';
 import { RegButton } from '../pages/Register';
 
+interface LoginButton {
+  disabled?: boolean;
+}
+
 export const Wrapper = styled.div`
   height: 100vh;
   background-image: url(${background});
@@ -57,12 +61,12 @@ export const RegisterInput = styled.input`
   }
 `;
 
-export const LoginButton = styled.button`
+export const LoginButton = styled.button<LoginButton>`
   min-height: 3.2em;
   width: 100%;
   margin: 25px 0;
   border-radius: 5px;
-  background-color: #d11114;
+  background-color: ${({ disabled }) => (disabled ? 'grey' : 'red')};
   font-size: 16px;
   border: none;
   font-weight: 600;
