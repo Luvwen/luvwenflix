@@ -1,7 +1,7 @@
 import { FormEvent } from 'react';
 
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../../firebase/firebase';
+import { FirebaseAuth } from '../../firebase/firebase';
 
 import { useForm } from '../../hooks/useForm';
 import { checkEmail, checkPassword, checkUsername } from '../../utils/helpers';
@@ -37,7 +37,7 @@ export const Register = () => {
       checkEmail(email) &&
       checkPassword(password, confirmPassword)
     ) {
-      createUserWithEmailAndPassword(auth, email, password)
+      createUserWithEmailAndPassword(FirebaseAuth, email, password)
         .then((userCredential) => {
           const user = userCredential.user;
           console.log(user);

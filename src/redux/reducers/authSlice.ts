@@ -1,37 +1,38 @@
 import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
 
 interface Login {
-  isLoading: boolean;
-  isLogged: boolean;
-  uid: string;
+  status: string;
+  uid: string | null;
+  name: string | null;
 }
 
 const initialState: Login = {
-  isLoading: false,
-  isLogged: false,
-  uid: '',
+  status: 'not-authenticated',
+  uid: null,
+  name: null,
 };
 
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    startLogin: (state) => {
-      return { ...state, isLoading: true, isLogged: false, uid: '' };
-    },
-    endLogin: (state, action: PayloadAction<string>) => {
+    login: (state, action) => {
       return {
         ...state,
-        isLoading: false,
-        isLogged: true,
-        uid: action.payload,
+        status: 'authenticated',
+        uid: action.payload.uid,
       };
+    },
+    logout: (state, payload) => {
+      return { ...state, status: 'not-authenticated', uid: null, name: null };
+    },
+    checkingLogin: (state) => {
+      return { ...state, status: 'checking' };
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { startLogin, endLogin } = authSlice.actions;
+export const { login, logout, checkingLogin } = authSlice.actions;
 
 export default authSlice.reducer;

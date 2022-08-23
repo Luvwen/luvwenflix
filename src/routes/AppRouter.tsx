@@ -1,19 +1,29 @@
 import { useSelector } from 'react-redux';
-import { Route, Routes } from 'react-router-dom';
-import { AuthRoutes } from '../auth/routes/AuthRoutes';
-import { HomeRoutes } from '../components/routes/HomeRoutes';
+import { Navigate, Route, Routes } from 'react-router-dom';
+
+import { Homepage } from '../components/Homepage';
 import { RootState } from '../redux/store';
+import { AuthRoutes } from './AuthRoutes';
 
 export const AppRouter = () => {
-  const { uid } = useSelector((state: RootState) => state.auth);
+  const { status } = useSelector((state: RootState) => state.auth);
 
+  const isLogged = false;
+
+  if (status === 'checking') return <h1>Loading...</h1>;
   return (
     <Routes>
-      {uid !== null && uid !== '' ? (
-        <Route path='/*' element={<HomeRoutes />} />
+      {isLogged ? (
+        <Route path='/' element={<Homepage />} />
       ) : (
-        <Route path='/auth/*' element={<AuthRoutes />} />
+        <Route path='/*' element={<Navigate replace to='auth/login' />} />
       )}
+
+      {isLogged && (
+        <Route path='/auth/*' element={<Navigate replace to='/' />} />
+      )}
+
+      <Route path='auth/*' element={<AuthRoutes />} />
     </Routes>
   );
 };

@@ -1,5 +1,7 @@
-import React from 'react';
-
 export const Homepage = () => {
-  return <div>Homepage</div>;
+  return (
+    <div>
+      <button>logout</button>
+    </div>
+  );
 };

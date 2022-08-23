@@ -1,11 +1,12 @@
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { FormEvent } from 'react';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
-import { auth } from '../../firebase/firebase';
+import { FormEvent, MouseEvent } from 'react';
+
 import { useForm } from '../../hooks/useForm';
-import { endLogin, startLogin } from '../../redux/reducers/authSlice';
-import { RootState } from '../../redux/store';
+import { checkingLogin } from '../../redux/reducers/authSlice';
+import {
+  startLoginWithEmailPassword,
+  startLoginWithGoogle,
+} from '../../redux/reducers/thunks';
+import { useAppDispatch } from '../../redux/store';
 import {
   Wrapper,
   CardLogin,
@@ -28,30 +29,25 @@ export const Login = () => {
 
   const { email, password } = formValues;
 
-  const { isLoading } = useSelector((state: RootState) => state.auth);
+  const dispatch = useAppDispatch();
 
-  const dispatch = useDispatch();
-
-  const handleSubmit = (evt: FormEvent<HTMLFormElement>) => {
+  const handleLogin = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-
-    dispatch(startLogin());
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        const { uid } = user;
-        dispatch(endLogin(uid));
-      })
-      .catch((err) => console.log(err));
-
+    dispatch(checkingLogin());
+    dispatch(startLoginWithEmailPassword(email, password));
     resetForm();
   };
 
+  const handleGoogleLogin = (evt: MouseEvent<HTMLButtonElement>) => {
+    evt.preventDefault();
+    dispatch(checkingLogin());
+    dispatch(startLoginWithGoogle());
+  };
   return (
     <Wrapper>
       <CardLogin>
         <LoginTitle>Inicia sesión</LoginTitle>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleLogin}>
           <FormInput
             name='email'
             value={email}
@@ -67,8 +63,9 @@ export const Login = () => {
             type='password'
             placeholder='Contraseña'
           />
-          <LoginFormButton disabled={isLoading}>Iniciar Sesión</LoginFormButton>
+          <LoginFormButton>Iniciar Sesión</LoginFormButton>
         </Form>
+        <button onClick={handleGoogleLogin}>Google</button>
         <LinkForm to='/auth/register'>Registrarse</LinkForm>
       </CardLogin>
     </Wrapper>
