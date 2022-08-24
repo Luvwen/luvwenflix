@@ -1,12 +1,13 @@
-import { FormEvent, MouseEvent } from 'react';
+import { FormEvent, MouseEvent, useEffect, useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import Swal from 'sweetalert2';
 
 import { useForm } from '../../hooks/useForm';
-import { checkingLogin } from '../../redux/reducers/authSlice';
 import {
   startLoginWithEmailPassword,
   startLoginWithGoogle,
 } from '../../redux/reducers/thunks';
-import { useAppDispatch } from '../../redux/store';
+import { RootState, useAppDispatch } from '../../redux/store';
 import {
   Wrapper,
   CardLogin,
@@ -31,18 +32,36 @@ export const Login = () => {
 
   const dispatch = useAppDispatch();
 
+  const { status, errorMessage } = useSelector(
+    (state: RootState) => state.auth
+  );
+
+  const isAuthenticating = useMemo(() => status === 'checking', [status]);
+
   const handleLogin = (evt: FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
-    dispatch(checkingLogin());
+
     dispatch(startLoginWithEmailPassword(email, password));
+
     resetForm();
   };
 
   const handleGoogleLogin = (evt: MouseEvent<HTMLButtonElement>) => {
     evt.preventDefault();
-    dispatch(checkingLogin());
+
     dispatch(startLoginWithGoogle());
   };
+
+  useEffect(() => {
+    errorMessage !== null &&
+      Swal.fire({
+        title: 'Invalid credentials',
+        text: errorMessage,
+        icon: 'error',
+        confirmButtonText: 'Try again',
+      });
+  }, [errorMessage]);
+
   return (
     <Wrapper>
       <CardLogin>
@@ -63,9 +82,13 @@ export const Login = () => {
             type='password'
             placeholder='Contraseña'
           />
-          <LoginFormButton>Iniciar Sesión</LoginFormButton>
+          <LoginFormButton disabled={isAuthenticating}>
+            Iniciar Sesión
+          </LoginFormButton>
         </Form>
-        <button onClick={handleGoogleLogin}>Google</button>
+        <button disabled={isAuthenticating} onClick={handleGoogleLogin}>
+          Google
+        </button>
         <LinkForm to='/auth/register'>Registrarse</LinkForm>
       </CardLogin>
     </Wrapper>

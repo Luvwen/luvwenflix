@@ -16,10 +16,11 @@ export const signInWithGoogle = async () => {
       displayName,
       uid,
     };
-  } catch (error) {
+  } catch (error: any) {
+    const errorMessage = error.message;
     return {
       ok: false,
-      error,
+      errorMessage,
     };
   }
 };
@@ -40,10 +41,15 @@ export const signInWithEmailPassword = async (
       displayName,
       uid,
     };
-  } catch (error) {
+  } catch (error: any) {
+    const errorMessage = error.message;
     return {
       ok: false,
-      error,
+      errorMessage,
     };
   }
+};
+
+export const logoutFromFirebase = async () => {
+  return await FirebaseAuth.signOut();
 };
